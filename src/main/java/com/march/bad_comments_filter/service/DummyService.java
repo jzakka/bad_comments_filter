@@ -10,19 +10,20 @@ import java.util.Random;
 public class DummyService {
     Random random = new Random();
     public String doSomething(String origin){
-        process();
+        process(origin);
+        log.info("{} completed", origin);
         return origin + "processed";
     }
 
-    private String process(){
+    private String process(String job){
         // 댓글 하나당 처리에 최대 200ms 소요된다고 가정
         int nlpProcessingTime = random.nextInt(200);
-//        log.info("process time={}", nlpProcessingTime);
         try{
             Thread.sleep(nlpProcessingTime);
         }catch (InterruptedException e) {
             throw new RuntimeException("Exception occured!", e);
         }
+        log.info("job:{} processed time={}",job, nlpProcessingTime);
         return "completed";
     }
 }

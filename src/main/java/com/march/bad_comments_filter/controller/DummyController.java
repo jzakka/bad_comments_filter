@@ -2,8 +2,12 @@ package com.march.bad_comments_filter.controller;
 
 import com.march.bad_comments_filter.service.DummyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -26,5 +30,18 @@ public class DummyController {
                 .thenApply(v -> futures.stream()
                         .map(CompletableFuture::join)
                         .toList());
+    }
+
+    @PostMapping(value = "/api/test-async", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> processCommentAsync() {
+        return Flux.range(0, 100)
+                // flatMap을 사용하여 병렬 처리
+                .flatMap(i -> Mono.fromCallable(() -> dummyService.doSomething(String.valueOf(i)))
+                        // 각 작업을 별도의 스레드에서 실행
+                        .subscribeOn(Schedulers.boundedElastic()))
+                // 결과를 순차적으로 처리하지 않고 병렬로 처리
+                .parallel()
+                .runOn(Schedulers.parallel())
+                .sequential();
     }
 }
