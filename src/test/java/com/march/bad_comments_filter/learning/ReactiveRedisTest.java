@@ -4,8 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.ReactiveListOperations;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
@@ -13,15 +12,16 @@ import reactor.test.StepVerifier;
 
 import java.util.List;
 
-@SpringBootTest
 class ReactiveRedisTest {
-    @Autowired
-    ReactiveStringRedisTemplate redisTemplate;
+    LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory("localhost", 7379);
+
+    ReactiveStringRedisTemplate redisTemplate = new ReactiveStringRedisTemplate(connectionFactory);
 
     ReactiveListOperations<String, String> opsForList;
 
     @BeforeEach
     void setup() {
+        connectionFactory.start();
         opsForList = redisTemplate.opsForList();
     }
 
