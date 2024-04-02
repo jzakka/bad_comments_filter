@@ -20,7 +20,7 @@ public class DummyController {
 
     @PostMapping("/api/test")
     public CompletableFuture<List> processComment(){
-        List<CompletableFuture<String>> futures = IntStream.range(0, 100)
+        List<CompletableFuture<String>> futures = IntStream.range(0, 50)
                 .mapToObj(i -> CompletableFuture
                         .supplyAsync(()->dummyService.doSomething(String.valueOf(i))))
                 .toList();
@@ -34,7 +34,7 @@ public class DummyController {
 
     @PostMapping(value = "/api/test-async", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> processCommentAsync() {
-        return Flux.range(0, 100)
+        return Flux.range(0, 50)
                 // flatMap을 사용하여 병렬 처리
                 .flatMap(i -> Mono.fromCallable(() -> dummyService.doSomething(String.valueOf(i)))
                         // 각 작업을 별도의 스레드에서 실행
