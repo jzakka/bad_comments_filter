@@ -2,7 +2,6 @@ package com.march.bad_comments_filter;
 
 import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.repository.ReactiveCommentTagsRedisRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +15,7 @@ import reactor.test.StepVerifier;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class IntegrationTest {
@@ -39,7 +38,9 @@ class IntegrationTest {
 
     void clear() {
         redisTemplate.scan(ScanOptions.scanOptions().match("*").build())
-                .subscribe(key -> redisTemplate.delete(key).subscribe());
+                .flatMap(key -> redisTemplate.delete(key))
+                .collectList() // 모든 delete 연산을 리스트로 모음
+                .block(); // 모든 삭제 연산이 완료될 때까지 기다림
     }
 
     @Test
@@ -73,6 +74,18 @@ class IntegrationTest {
                     assertThat(response.id()).isEqualTo("comment1");
                     assertThat(response.tags()).containsExactlyInAnyOrder("tag1", "tag2", "tag3");
                 })
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 키로 조회시 Mono empty")
+    void getByEmptyTest() {
+        // given
+        String text = "EMPTY";
+
+        // expect
+        repository.findByText(new CommentRequest("comment-emtpy", text))
+                .as(StepVerifier::create)
                 .verifyComplete();
     }
 }
