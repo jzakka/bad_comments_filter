@@ -2,7 +2,7 @@ package com.march.bad_comments_filter.service;
 
 import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.dto.CommentResponse;
-import com.march.bad_comments_filter.repository.ReactiveCommentTagsRedisRepository;
+import com.march.bad_comments_filter.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CommentService {
-    private final ReactiveCommentTagsRedisRepository commentRepository;
+    private final CommentRepository commentRepository;
     private final CommentCategorizer categorizer;
 
     public ParallelFlux<CommentResponse> getCommentTags(List<CommentRequest> commentRequests) {

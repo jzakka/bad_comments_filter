@@ -4,6 +4,7 @@ import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.dto.CommentResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 import java.util.List;
@@ -13,6 +14,7 @@ public class MockCommentCategorizer implements CommentCategorizer{
     @Override
     public Mono<CommentResponse> categorize(CommentRequest commentRequest) {
         return Mono.just(new CommentResponse(commentRequest.id(), List.of("Mock", "Test")))
-                .delayElement(Duration.ofMillis(100));
+                .publishOn(Schedulers.boundedElastic())
+                .delayElement(Duration.ofMillis(200));
     }
 }

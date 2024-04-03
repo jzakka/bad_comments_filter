@@ -4,6 +4,7 @@ import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.dto.CommentResponse;
 import com.march.bad_comments_filter.exception.KeyGenerateException;
 import com.march.bad_comments_filter.security.KeyGenerator;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.ReactiveListOperations;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,7 +16,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-public class ReactiveCommentTagsRedisRepository {
+@Profile("!perf-test")
+public class ReactiveCommentTagsRedisRepository implements CommentRepository{
     private final ReactiveListOperations<String, String> opsForList;
     private final KeyGenerator keyGenerator;
 
@@ -24,6 +26,7 @@ public class ReactiveCommentTagsRedisRepository {
         this.keyGenerator = keyGenerator;
     }
 
+    @Override
     public Mono<CommentResponse> findByText(CommentRequest commentRequest) {
         String textHash = getKey(commentRequest.text());
 
@@ -43,6 +46,7 @@ public class ReactiveCommentTagsRedisRepository {
         return opsForList.range(key, 0, -1);
     }
 
+    @Override
     public Mono<Long> save(String text, List<String> tags) {
         String textNotNull = Objects.requireNonNull(text, "Text cannot be null");
 
