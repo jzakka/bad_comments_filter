@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.util.Map;
 
 @Repository
 @Profile("perf-test")
@@ -17,7 +17,7 @@ public class PerformanceTestCommentRepository implements CommentRepository{
     }
 
     @Override
-    public Mono<Long> save(String text, List<String> tags) {
-        return Mono.just(1L);
+    public Mono<Boolean> save(String text, Map<String, Double> labelPrediction) {
+        return Mono.just(true);
     }
 }

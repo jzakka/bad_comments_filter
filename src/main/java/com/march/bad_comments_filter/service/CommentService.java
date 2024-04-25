@@ -33,6 +33,6 @@ public class CommentService {
     private Mono<CommentResponse> fallback(CommentRequest commentRequest) {
         return categorizer.categorize(commentRequest)
                 .publishOn(Schedulers.boundedElastic())
-                .doOnNext(res -> commentRepository.save(commentRequest.text(), res.tags()).subscribe());
+                .doOnNext(res -> commentRepository.save(commentRequest.text(), res.labelPrediction()).subscribe());
     }
 }

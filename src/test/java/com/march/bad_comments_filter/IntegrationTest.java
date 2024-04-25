@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.ScanOptions;
 import reactor.test.StepVerifier;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,14 +49,18 @@ class IntegrationTest {
     void insertTest() {
         // given
         String text = "This is comment.";
-        List<String> tags = List.of("tag1", "tag2", "tag3");
+        Map<String, Double> prediction = Map.of(
+                "tag1", 0.0,
+                "tag2", 0.0,
+                "tag3", 0.0
+        );
 
         // when
-        repository.save(text, tags)
+        repository.save(text, prediction)
 
         // then
                 .as(StepVerifier::create)
-                .expectNext(3L)
+                .expectNext(true)
                 .verifyComplete();
     }
 
@@ -64,15 +69,19 @@ class IntegrationTest {
     void getTest() {
         // given
         String text = "This is comment.";
-        List<String> tags = List.of("tag1", "tag2", "tag3");
-        repository.save(text, tags).block();
+        Map<String, Double> prediction = Map.of(
+                "tag1", 0.0,
+                "tag2", 0.0,
+                "tag3", 0.0
+        );
+        repository.save(text, prediction).block();
 
         // expect
         repository.findByText(new CommentRequest("comment1", text))
                 .as(StepVerifier::create)
                 .assertNext(response -> {
                     assertThat(response.id()).isEqualTo("comment1");
-                    assertThat(response.tags()).containsExactlyInAnyOrder("tag1", "tag2", "tag3");
+                    assertThat(response.labelPrediction()).containsKeys("tag1", "tag2", "tag3");
                 })
                 .verifyComplete();
     }

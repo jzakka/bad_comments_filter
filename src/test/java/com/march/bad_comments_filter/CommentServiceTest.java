@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -39,11 +40,11 @@ class CommentServiceTest {
                 new CommentRequest("test-id3", "text3")
         );
         when(commentRepository.findByText(commentRequests.get(0)))
-                .thenReturn(Mono.just(new CommentResponse("test-id1", List.of("test", "1"))));
+                .thenReturn(Mono.just(new CommentResponse("test-id1", Map.of("test", 0.0))));
         when(commentRepository.findByText(commentRequests.get(1)))
-                .thenReturn(Mono.just(new CommentResponse("test-id2", List.of("test", "2"))));
+                .thenReturn(Mono.just(new CommentResponse("test-id2", Map.of("test", 0.0))));
         when(commentRepository.findByText(commentRequests.get(2)))
-                .thenReturn(Mono.just(new CommentResponse("test-id3", List.of("test", "3"))));
+                .thenReturn(Mono.just(new CommentResponse("test-id3", Map.of("test", 0.0))));
         // expect
         commentService.getCommentTags(commentRequests)
                 .as(StepVerifier::create)
@@ -56,12 +57,12 @@ class CommentServiceTest {
     void fallbackTest() {
         // given
         when(commentRepository.findByText(any())).thenReturn(Mono.empty());
-        when(commentRepository.save(anyString(), anyList())).thenReturn(Mono.just(1L));
+        when(commentRepository.save(anyString(), anyMap())).thenReturn(Mono.just(true));
         // when
         commentService.getCommentTags(List.of(new CommentRequest("test-id1", "cache miss")))
                 .sequential()
                 .blockFirst();
         //then
-        verify(commentRepository, times(1)).save(anyString(), anyList());
+        verify(commentRepository, times(1)).save(anyString(), anyMap());
     }
 }
