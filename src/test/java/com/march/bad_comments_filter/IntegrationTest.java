@@ -2,6 +2,7 @@ package com.march.bad_comments_filter;
 
 import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.repository.ReactiveCommentTagsRedisRepository;
+import com.march.bad_comments_filter.security.KeyGenerator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,14 +23,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class IntegrationTest {
     @Autowired
     ReactiveStringRedisTemplate redisTemplate;
-    ReactiveListOperations<String, String> opsForList;
     @Autowired
+    KeyGenerator keyGenerator;
+    ReactiveListOperations<String, String> opsForList;
     ReactiveCommentTagsRedisRepository repository;
 
     @BeforeEach
     void setup() {
         clear();
         opsForList = redisTemplate.opsForList();
+        repository = new ReactiveCommentTagsRedisRepository(redisTemplate, keyGenerator);
     }
 
     @AfterEach

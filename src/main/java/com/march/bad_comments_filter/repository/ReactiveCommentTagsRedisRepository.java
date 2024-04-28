@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Repository
-@Profile("!perf-test")
+@Profile("prod")
 public class ReactiveCommentTagsRedisRepository implements CommentRepository{
     private final ReactiveHashOperations<String, String, String> opsForHash;
     private final KeyGenerator keyGenerator;

@@ -2,7 +2,6 @@ package com.march.bad_comments_filter.service;
 
 import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.dto.CommentResponse;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -10,7 +9,6 @@ import reactor.core.scheduler.Schedulers;
 import java.time.Duration;
 import java.util.Map;
 
-@Profile("test")
 @Component
 public class MockCommentCategorizer implements CommentCategorizer {
     @Override

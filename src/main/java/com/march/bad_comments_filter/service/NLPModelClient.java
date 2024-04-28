@@ -3,6 +3,7 @@ package com.march.bad_comments_filter.service;
 import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.dto.CommentResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
+@Profile("prod")
 @Service
 @RequiredArgsConstructor
 public class NLPModelClient implements CommentCategorizer {
