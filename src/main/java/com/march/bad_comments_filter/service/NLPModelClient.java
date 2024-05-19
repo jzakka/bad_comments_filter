@@ -2,6 +2,7 @@ package com.march.bad_comments_filter.service;
 
 import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.dto.CommentResponse;
+import com.march.bad_comments_filter.dto.PredictionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -23,7 +26,12 @@ public class NLPModelClient implements CommentCategorizer {
                 .exchangeToMono(res -> {
                     if (res.statusCode().equals(HttpStatus.OK)) {
                         return res
-                                .bodyToMono(new ParameterizedTypeReference<Map<String, Double>>() {})
+                                .bodyToMono(new ParameterizedTypeReference<List<PredictionResponse>>() {})
+                                .map(body -> {
+                                    Map<String, Double> mappedResult = new HashMap<>();
+                                    body.forEach(predicttion -> mappedResult.put(predicttion.label(), predicttion.score()));
+                                    return mappedResult;
+                                })
                                 .map(labelPrediction -> new CommentResponse(commentRequest.id(), labelPrediction));
                     }
                     return res.createError();
