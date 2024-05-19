@@ -2,11 +2,13 @@ package com.march.bad_comments_filter.repository;
 
 import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.dto.CommentResponse;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
+@Profile("test")
 @Repository
 public class MockCommentRepository implements CommentRepository{
     @Override
