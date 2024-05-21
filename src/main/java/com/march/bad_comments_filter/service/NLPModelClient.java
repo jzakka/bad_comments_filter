@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,11 +25,6 @@ public class NLPModelClient implements CommentCategorizer {
                     if (res.statusCode().equals(HttpStatus.OK)) {
                         return res
                                 .bodyToMono(new ParameterizedTypeReference<List<PredictionResponse>>() {})
-                                .map(body -> {
-                                    Map<String, Double> mappedResult = new HashMap<>();
-                                    body.forEach(predicttion -> mappedResult.put(predicttion.label(), predicttion.score()));
-                                    return mappedResult;
-                                })
                                 .map(labelPrediction -> new CommentResponse(commentRequest.id(), labelPrediction));
                     }
                     return res.createError();

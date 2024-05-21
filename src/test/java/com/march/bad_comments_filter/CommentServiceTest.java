@@ -2,6 +2,7 @@ package com.march.bad_comments_filter;
 
 import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.dto.CommentResponse;
+import com.march.bad_comments_filter.dto.PredictionResponse;
 import com.march.bad_comments_filter.repository.ReactiveCommentTagsRedisRepository;
 import com.march.bad_comments_filter.service.CommentService;
 import com.march.bad_comments_filter.service.MockCommentCategorizer;
@@ -15,7 +16,6 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -40,15 +40,15 @@ class CommentServiceTest {
                 new CommentRequest("test-id3", "text3")
         );
         when(commentRepository.findByText(commentRequests.get(0)))
-                .thenReturn(Mono.just(new CommentResponse("test-id1", Map.of("test", 0.0))));
+                .thenReturn(Mono.just(new CommentResponse("test-id1", List.of(new PredictionResponse("test", 0.0)))));
         when(commentRepository.findByText(commentRequests.get(1)))
-                .thenReturn(Mono.just(new CommentResponse("test-id2", Map.of("test", 0.0))));
+                .thenReturn(Mono.just(new CommentResponse("test-id2", List.of(new PredictionResponse("test", 0.0)))));
         when(commentRepository.findByText(commentRequests.get(2)))
-                .thenReturn(Mono.just(new CommentResponse("test-id3", Map.of("test", 0.0))));
+                .thenReturn(Mono.just(new CommentResponse("test-id3", List.of(new PredictionResponse("test", 0.0)))));
         // expect
-        commentService.getCommentTags(commentRequests)
+        commentService.getPredictionResults(commentRequests)
                 .as(StepVerifier::create)
-                .expectNextCount(3L)
+                .expectNextCount(1)
                 .verifyComplete();
     }
 
@@ -57,12 +57,11 @@ class CommentServiceTest {
     void fallbackTest() {
         // given
         when(commentRepository.findByText(any())).thenReturn(Mono.empty());
-        when(commentRepository.save(anyString(), anyMap())).thenReturn(Mono.just(true));
+        when(commentRepository.save(anyString(), anyList())).thenReturn(Mono.just(true));
         // when
-        commentService.getCommentTags(List.of(new CommentRequest("test-id1", "cache miss")))
-                .sequential()
-                .blockFirst();
+        commentService.getPredictionResults(List.of(new CommentRequest("test-id1", "cache miss")))
+                .block();
         //then
-        verify(commentRepository, times(1)).save(anyString(), anyMap());
+        verify(commentRepository, times(1)).save(anyString(), anyList());
     }
 }

@@ -2,6 +2,7 @@ package com.march.bad_comments_filter.repository;
 
 import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.dto.CommentResponse;
+import com.march.bad_comments_filter.dto.PredictionResponse;
 import com.march.bad_comments_filter.exception.KeyGenerateException;
 import com.march.bad_comments_filter.security.KeyGenerator;
 import org.springframework.data.redis.core.ReactiveHashOperations;
@@ -11,6 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,7 +48,7 @@ public class ReactiveCommentTagsRedisRepository implements CommentRepository{
     }
 
     @Override
-    public Mono<Boolean> save(String text, Map<String, Double> labelPrediction) {
+    public Mono<Boolean> save(String text, List<PredictionResponse> labelPrediction) {
         String textNotNull = Objects.requireNonNull(text, "Text cannot be null");
 
         String textHash = getKey(textNotNull);
@@ -54,16 +56,16 @@ public class ReactiveCommentTagsRedisRepository implements CommentRepository{
         return opsForHash.putAll(textHash, convertStringValue(labelPrediction));
     }
 
-    private Map<String, String> convertStringValue(Map<String, Double> labelPrediction) {
-        return labelPrediction.entrySet().stream()
-                .map(e -> Map.entry(e.getKey(), e.getValue().toString()))
+    private Map<String, String> convertStringValue(List<PredictionResponse> labelPredictions) {
+        return labelPredictions.stream()
+                .map(e -> Map.entry(e.label(), String.valueOf(e.score())))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private Map<String, Double> convertDoubleValue(Map<String, String> labelPrediction) {
+    private List<PredictionResponse> convertDoubleValue(Map<String, String> labelPrediction) {
         return labelPrediction.entrySet().stream()
-                .map(e -> Map.entry(e.getKey(), Double.valueOf(e.getValue())))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .map(e -> new PredictionResponse(e.getKey(), Double.parseDouble(e.getValue())))
+                .toList();
     }
 
     private String getKey(String text) {

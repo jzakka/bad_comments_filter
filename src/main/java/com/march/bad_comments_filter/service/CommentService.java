@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.ParallelFlux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
@@ -18,11 +17,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentCategorizer categorizer;
 
-    public ParallelFlux<CommentResponse> getCommentTags(List<CommentRequest> commentRequests) {
+    public Mono<List<CommentResponse>> getPredictionResults(List<CommentRequest> commentRequests) {
         return Flux.fromIterable(commentRequests)
                 .parallel()
                 .runOn(Schedulers.parallel())
-                .flatMap(this::getSingleResult);
+                .flatMap(this::getSingleResult)
+                .sequential()
+                .collectList();
     }
 
     private Mono<CommentResponse> getSingleResult(CommentRequest commentRequest) {

@@ -1,6 +1,6 @@
 package com.march.bad_comments_filter.dto;
 
-import java.util.Map;
+import java.util.List;
 
-public record CommentResponse(String id, Map<String, Double> labelPrediction) {
+public record CommentResponse(String id, List<PredictionResponse> labelPrediction) {
 }

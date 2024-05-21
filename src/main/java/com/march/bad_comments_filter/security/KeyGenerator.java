@@ -1,9 +1,12 @@
 package com.march.bad_comments_filter.security;
 
+import com.march.bad_comments_filter.label.Labels;
 import lombok.RequiredArgsConstructor;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class KeyGenerator {
@@ -22,5 +25,9 @@ public class KeyGenerator {
             builder.append(String.format("%02x", b));
         }
         return builder.toString();
+    }
+
+    public List<String> getLabelKey(String hashedKey){
+        return Arrays.stream(Labels.values()).map(label -> label + ":" + hashedKey).toList();
     }
 }
