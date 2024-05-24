@@ -4,6 +4,7 @@ import com.march.bad_comments_filter.dto.CommentRequest;
 import com.march.bad_comments_filter.dto.CommentResponse;
 import com.march.bad_comments_filter.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"https://gall.dcinside.com", "https://*.youtube.com", "https://n.news.naver.com"})
 public class CommentController {
     private final CommentService commentService;
 
