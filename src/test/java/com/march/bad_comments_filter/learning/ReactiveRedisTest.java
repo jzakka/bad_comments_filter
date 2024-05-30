@@ -13,7 +13,7 @@ import reactor.test.StepVerifier;
 import java.util.List;
 
 class ReactiveRedisTest {
-    LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory("localhost", 7379);
+    LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory("localhost", 6379);
 
     ReactiveStringRedisTemplate redisTemplate = new ReactiveStringRedisTemplate(connectionFactory);
 
