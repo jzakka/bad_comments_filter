@@ -19,7 +19,7 @@ public class NLPModelClient implements CommentCategorizer {
     @Override
     public Mono<CommentResponse> categorize(CommentRequest commentRequest) {
         return webClient.post()
-                .uri("/api/classify")
+                .uri("/api/classify-single")
                 .bodyValue(commentRequest.text())
                 .exchangeToMono(res -> {
                     if (res.statusCode().equals(HttpStatus.OK)) {

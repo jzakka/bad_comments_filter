@@ -18,8 +18,13 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping(value = "/api/blind")
+    @PostMapping(value = "/api/blind-old")
     public Mono<List<CommentResponse>> blindBadComments(@RequestBody List<CommentRequest> commentRequests) {
         return commentService.getPredictionResults(commentRequests);
+    }
+
+    @PostMapping(value = "/api/blind")
+    public Mono<CommentResponse> blindBadComment(@RequestBody CommentRequest commentRequest) {
+        return commentService.getSingleResult(commentRequest);
     }
 }

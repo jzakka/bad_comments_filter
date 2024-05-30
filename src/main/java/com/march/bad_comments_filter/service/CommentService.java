@@ -26,7 +26,7 @@ public class CommentService {
                 .collectList();
     }
 
-    private Mono<CommentResponse> getSingleResult(CommentRequest commentRequest) {
+    public Mono<CommentResponse> getSingleResult(CommentRequest commentRequest) {
         return commentRepository.findByText(commentRequest)
                 .switchIfEmpty(Mono.defer(() -> fallback(commentRequest)));
     }
