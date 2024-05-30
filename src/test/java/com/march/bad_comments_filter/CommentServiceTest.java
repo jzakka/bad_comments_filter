@@ -35,16 +35,16 @@ class CommentServiceTest {
     void getCommentTagsTest() {
         // given
         List<CommentRequest> commentRequests = List.of(
-                new CommentRequest("test-id1", "text1"),
-                new CommentRequest("test-id2", "text2"),
-                new CommentRequest("test-id3", "text3")
+                new CommentRequest(1, "text1"),
+                new CommentRequest(2, "text2"),
+                new CommentRequest(3, "text3")
         );
         when(commentRepository.findByText(commentRequests.get(0)))
-                .thenReturn(Mono.just(new CommentResponse("test-id1", List.of(new PredictionResponse("test", 0.0)))));
+                .thenReturn(Mono.just(new CommentResponse(1, List.of(new PredictionResponse("test", 0.0)))));
         when(commentRepository.findByText(commentRequests.get(1)))
-                .thenReturn(Mono.just(new CommentResponse("test-id2", List.of(new PredictionResponse("test", 0.0)))));
+                .thenReturn(Mono.just(new CommentResponse(2, List.of(new PredictionResponse("test", 0.0)))));
         when(commentRepository.findByText(commentRequests.get(2)))
-                .thenReturn(Mono.just(new CommentResponse("test-id3", List.of(new PredictionResponse("test", 0.0)))));
+                .thenReturn(Mono.just(new CommentResponse(3, List.of(new PredictionResponse("test", 0.0)))));
         // expect
         commentService.getPredictionResults(commentRequests)
                 .as(StepVerifier::create)
@@ -59,7 +59,7 @@ class CommentServiceTest {
         when(commentRepository.findByText(any())).thenReturn(Mono.empty());
         when(commentRepository.save(anyString(), anyList())).thenReturn(Mono.just(true));
         // when
-        commentService.getPredictionResults(List.of(new CommentRequest("test-id1", "cache miss")))
+        commentService.getPredictionResults(List.of(new CommentRequest(1, "cache miss")))
                 .block();
         //then
         verify(commentRepository, times(1)).save(anyString(), anyList());

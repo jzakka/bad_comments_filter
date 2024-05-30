@@ -81,10 +81,10 @@ class IntegrationTest {
         repository.save(text, predictions).block();
 
         // expect
-        repository.findByText(new CommentRequest("comment1", text))
+        repository.findByText(new CommentRequest(1, text))
                 .as(StepVerifier::create)
                 .assertNext(response -> {
-                    assertThat(response.id()).isEqualTo("comment1");
+                    assertThat(response.id()).isEqualTo(1);
                     Set<String> labels = response.labelPrediction().stream().map(e -> e.label()).collect(Collectors.toSet());
                     assertThat(labels).contains("tag1", "tag2", "tag3");
                 })
@@ -98,7 +98,7 @@ class IntegrationTest {
         String text = "EMPTY";
 
         // expect
-        repository.findByText(new CommentRequest("comment-emtpy", text))
+        repository.findByText(new CommentRequest(0, text))
                 .as(StepVerifier::create)
                 .verifyComplete();
     }

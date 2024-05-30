@@ -36,7 +36,7 @@ public class ReactiveCommentTagsRedisRepository implements CommentRepository{
                 .flatMap(predicted -> getResponseOrEmpty(commentRequest.id(), predicted));
     }
 
-    private Mono<CommentResponse> getResponseOrEmpty(String id, Map<String, String> predictedResult) {
+    private Mono<CommentResponse> getResponseOrEmpty(int id, Map<String, String> predictedResult) {
         if (predictedResult.isEmpty()) {
             return Mono.empty();
         }
