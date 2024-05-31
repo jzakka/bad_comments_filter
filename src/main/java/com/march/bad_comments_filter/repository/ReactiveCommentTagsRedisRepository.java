@@ -5,6 +5,7 @@ import com.march.bad_comments_filter.dto.CommentResponse;
 import com.march.bad_comments_filter.dto.PredictionResponse;
 import com.march.bad_comments_filter.exception.KeyGenerateException;
 import com.march.bad_comments_filter.security.KeyGenerator;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.ReactiveHashOperations;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Profile("!benchmark")
 @Repository
 public class ReactiveCommentTagsRedisRepository implements CommentRepository{
     private final ReactiveHashOperations<String, String, String> opsForHash;

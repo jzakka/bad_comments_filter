@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-@Profile("test")
+@Profile({"benchmark","test"})
 @Repository
 public class MockCommentRepository implements CommentRepository{
     @Override
