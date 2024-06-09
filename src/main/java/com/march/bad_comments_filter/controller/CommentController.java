@@ -14,7 +14,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"https://gall.dcinside.com",  "https://n.news.naver.com"}, originPatterns = {"https://*.youtube.com"})
+@CrossOrigin(origins = {
+        "https://gall.dcinside.com",
+        "https://n.news.naver.com",
+        "https://theqoo.net",
+        "https://www.clien.net",
+        "https://www.instiz.net"}, originPatterns = {"https://*.youtube.com"})
 public class CommentController {
     private final CommentService commentService;
 
